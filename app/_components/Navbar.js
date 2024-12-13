@@ -57,12 +57,10 @@ const Navbar = () => {
             <span></span>
           </p>
 
-          <p>|</p>
+          
 
           <div className="flex space-x-1 items-center">
-            <ShoppingCartIcon className="h-4 w-4 text-cyan-600" />
-         
-            <span>cart</span>
+          <CartIcon />
           </div>
         </div>
       </div>
