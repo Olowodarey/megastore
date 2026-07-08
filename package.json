@@ -1,39 +1,25 @@
 {
   "name": "megastore",
-  "version": "0.1.0",
   "private": true,
+  "version": "0.1.0",
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "pnpm -r --parallel run dev",
+    "dev:web": "pnpm --filter web run dev",
+    "dev:api": "pnpm --filter api run start:dev",
+    "build": "pnpm -r run build",
+    "build:web": "pnpm --filter web run build",
+    "build:api": "pnpm --filter api run build",
+    "lint": "pnpm -r run lint"
   },
-  "dependencies": {
-    "@heroicons/react": "^2.2.0",
-    "@radix-ui/react-dropdown-menu": "^2.1.20",
-    "@radix-ui/react-separator": "^1.1.11",
-    "@radix-ui/react-slot": "^1.3.0",
-    "@reduxjs/toolkit": "^2.4.0",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "lucide-react": "^1.23.0",
-    "next": "15.0.4",
-    "next-themes": "^0.4.6",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-redux": "^9.1.2",
-    "react-toastify": "^10.0.6",
-    "tailwind-merge": "^3.6.0",
-    "tailwindcss-animate": "^1.0.7"
+  "engines": {
+    "node": ">=20"
   },
-  "devDependencies": {
-    "@types/node": "^26.1.1",
-    "@types/react": "^18.3.31",
-    "@types/react-dom": "^18.3.7",
-    "eslint": "^8",
-    "eslint-config-next": "15.0.4",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^6.0.3"
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "prisma",
+      "sharp"
+    ]
   }
 }
