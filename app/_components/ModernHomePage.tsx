@@ -13,6 +13,7 @@ import HeroBanner from "./HeroBanner";
 import SectionTitle from "./SectionTitle";
 import ModernProductCard from "./ModernProductCard";
 import CategoryCard from "./CategoryCard";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useFetchCategoryProductsQuery } from "../_services/fetchquerry";
 
 const categories = [
@@ -49,10 +50,7 @@ const ModernHomePage = () => {
           {loadingSmartphones ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
               {[...Array(5)].map((_, i) => (
-                <div
-                  key={i}
-                  className="h-64 bg-muted animate-pulse rounded-lg"
-                ></div>
+                <Skeleton key={i} className="h-64 rounded-lg" />
               ))}
             </div>
           ) : (
@@ -137,10 +135,7 @@ const ModernHomePage = () => {
           {loadingJewelry ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               {[...Array(6)].map((_, i) => (
-                <div
-                  key={i}
-                  className="h-48 bg-muted animate-pulse rounded-lg"
-                ></div>
+                <Skeleton key={i} className="h-48 rounded-lg" />
               ))}
             </div>
           ) : (

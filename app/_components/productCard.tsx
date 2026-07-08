@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Card } from "@/components/ui/card";
 import { Product } from "../_lib/types";
 
 interface ProductCardProps {
@@ -12,30 +13,28 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   return (
     <Link href={`/products/${id}`}>
-      <div className="group relative w-full sm:w-[180px] border-2 p-2 rounded-md">
-        <div className="flex justify-center h-[120px] sm:h-[100px] w-full overflow-hidden rounded-md group-hover:opacity-75 lg:h-32 xl:h-40">
-          <div className="relative w-full h-full">
-            <Image
-              alt={title}
-              src={image}
-              fill
-              sizes="(max-width: 640px) 100vw, 180px"
-              className="object-cover"
-            />
-          </div>
+      <Card className="group relative w-full overflow-hidden p-3 hover:shadow-md transition-shadow">
+        <div className="relative w-full h-32 sm:h-40 bg-muted/40 rounded-md overflow-hidden">
+          <Image
+            alt={title}
+            src={image}
+            fill
+            sizes="(max-width: 640px) 100vw, 180px"
+            className="object-contain p-3 group-hover:scale-105 transition-transform"
+          />
         </div>
-        <h3 className="mt-4 text-sm sm:text-lg text-gray-700">
-          {title.length > 20 ? `${title.slice(0, 10)}...` : title}
+        <h3 className="mt-4 text-sm sm:text-base font-medium text-foreground line-clamp-2 min-h-[40px]">
+          {title.length > 30 ? `${title.slice(0, 30)}…` : title}
         </h3>
-        <div className="mt-6 flex justify-between">
-          <p className="mt-1 text-xs sm:text-sm font-medium text-gray-900">
+        <div className="mt-3 flex items-center justify-between">
+          <p className="text-sm sm:text-base font-semibold text-primary">
             ${price}
           </p>
-          <p className="mt-1 text-xs sm:text-sm font-medium text-yellow-500">
-            Rating: {rating?.rate || "N/A"}
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            <span className="text-accent">★</span> {rating?.rate ?? "N/A"}
           </p>
         </div>
-      </div>
+      </Card>
     </Link>
   );
 };

@@ -1,163 +1,164 @@
 "use client";
 
-import { CheckIcon, ClockIcon } from "@heroicons/react/20/solid";
+import Image from "next/image";
 import Link from "next/link";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../_lib/hooks";
 import {
   removeFromCart,
-  clearCart,
   incrementQuantity,
   decrementQuantity,
 } from "../_lib/cartSlice";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 const Cart = () => {
   const cartItems = useAppSelector((state) => state.cart.cartItems);
   const dispatch = useAppDispatch();
 
-  const handleRemove = (id: number) => {
-    dispatch(removeFromCart(id));
-  };
-
-  const handleClearCart = () => {
-    dispatch(clearCart());
-  };
-
-  const handleIncrement = (id: number) => {
-    dispatch(incrementQuantity(id));
-  };
-
-  const handleDecrement = (id: number) => {
-    dispatch(decrementQuantity(id));
-  };
-
   const grandTotal = cartItems
     .reduce((total, item) => total + item.totalPrice, 0)
     .toFixed(2);
 
+  if (cartItems.length === 0) {
+    return (
+      <div className="bg-background">
+        <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:px-0 text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            Your cart is empty
+          </h1>
+          <p className="mt-4 text-muted-foreground">
+            Looks like you haven&apos;t added anything yet.
+          </p>
+          <Button asChild size="lg" className="mt-8">
+            <Link href="/">Continue Shopping</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white">
+    <div className="bg-background">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:px-0">
-        <h1 className="text-center text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        <h1 className="text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           Shopping Cart
         </h1>
 
-        <form className="mt-12">
+        <div className="mt-12 space-y-4">
           <section aria-labelledby="cart-heading">
             <h2 id="cart-heading" className="sr-only">
               Items in your shopping cart
             </h2>
 
-            <ul
-              role="list"
-              className="divide-y divide-gray-200 border-b border-t border-gray-200"
-            >
+            <ul role="list" className="space-y-4">
               {cartItems.map((item) => (
-                <li key={item.id} className="flex py-6">
-                  <div className="shrink-0">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-20 h-20 object-cover rounded"
-                    />
-                  </div>
+                <li key={item.id}>
+                  <Card className="flex gap-4 p-4">
+                    <div className="relative w-20 h-20 shrink-0 rounded-md bg-muted/40 overflow-hidden">
+                      <Image
+                        src={item.image}
+                        alt={item.title}
+                        fill
+                        sizes="80px"
+                        className="object-contain p-2"
+                      />
+                    </div>
 
-                  <div className="ml-4 flex flex-1 flex-col sm:ml-6">
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-sm">
-                          <p className="font-medium text-sm sm:text-lg text-gray-700 hover:text-gray-800">
-                            {item.title}
-                          </p>
-                        </h4>
-                        <p className="ml-4 text-sm font-medium text-gray-900">
+                    <div className="flex flex-1 flex-col">
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="text-sm sm:text-base font-medium text-foreground line-clamp-2">
+                          {item.title}
+                        </p>
+                        <p className="text-sm font-semibold text-primary whitespace-nowrap">
                           ${item.price}
                         </p>
                       </div>
-                      <p className="mt-1 text-base text-gray-500">
-                        Type {item.category}
+                      <p className="mt-1 text-sm text-muted-foreground capitalize">
+                        {item.category}
                       </p>
-                    </div>
 
-                    <div>
-                      <div className="mt-5 flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <button
+                      <div className="mt-4 flex items-center justify-between">
+                        <div className="inline-flex items-center gap-1 rounded-md border border-border p-1">
+                          <Button
                             type="button"
-                            className="px-3 py-1 bg-red-400 rounded-md"
-                            onClick={() => handleDecrement(item.id)}
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() =>
+                              dispatch(decrementQuantity(item.id))
+                            }
+                            aria-label="Decrease quantity"
                           >
-                            -
-                          </button>
-                          <p className="text-sm text-gray-700">
+                            <Minus className="h-4 w-4" />
+                          </Button>
+                          <span className="min-w-8 text-center text-sm text-foreground">
                             {item.quantity}
-                          </p>
-                          <button
+                          </span>
+                          <Button
                             type="button"
-                            className="px-2 py-1 bg-green-400 rounded-md"
-                            onClick={() => handleIncrement(item.id)}
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() =>
+                              dispatch(incrementQuantity(item.id))
+                            }
+                            aria-label="Increase quantity"
                           >
-                            +
-                          </button>
+                            <Plus className="h-4 w-4" />
+                          </Button>
                         </div>
 
-                        <div className="">
-                          <button
-                            type="button"
-                            className="px-4 py-2 bg-red-600 text-white rounded-md"
-                            onClick={() => handleRemove(item.id)}
-                          >
-                            Remove
-                          </button>
-                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => dispatch(removeFromCart(item.id))}
+                        >
+                          <Trash2 className="h-4 w-4 mr-1" />
+                          Remove
+                        </Button>
                       </div>
                     </div>
-                  </div>
+                  </Card>
                 </li>
               ))}
             </ul>
           </section>
 
           {/* Order summary */}
-          <section aria-labelledby="summary-heading" className="mt-10">
-            <div>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <dt className="text-base font-medium text-gray-900">
-                    Subtotal
-                  </dt>
-                  <dd className="ml-4 text-base font-medium text-gray-900">
-                    ${grandTotal}
-                  </dd>
-                </div>
-              </div>
-              <p className="mt-1 text-sm text-gray-500">
-                Shipping and taxes will be calculated at checkout.
-              </p>
+          <Card className="p-6 mt-10">
+            <div className="flex items-center justify-between">
+              <dt className="text-base font-medium text-foreground">
+                Subtotal
+              </dt>
+              <dd className="text-base font-semibold text-primary">
+                ${grandTotal}
+              </dd>
             </div>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Shipping and taxes will be calculated at checkout.
+            </p>
 
-            <div className="mt-10">
-              <button
-                type="submit"
-                className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+            <Separator className="my-6" />
+
+            <Button type="button" size="lg" className="w-full">
+              Checkout
+            </Button>
+
+            <div className="mt-6 text-center text-sm text-muted-foreground">
+              or{" "}
+              <Link
+                href="/"
+                className="font-medium text-primary hover:text-primary/80"
               >
-                Checkout
-              </button>
+                Continue Shopping<span aria-hidden="true"> &rarr;</span>
+              </Link>
             </div>
-
-            <div className="mt-6 text-center text-sm">
-              <p>
-                or{" "}
-                <Link
-                  href="/#"
-                  className="font-medium text-indigo-600 hover:text-indigo-500"
-                >
-                  Continue Shopping
-                  <span aria-hidden="true"> &rarr;</span>
-                </Link>
-              </p>
-            </div>
-          </section>
-        </form>
+          </Card>
+        </div>
       </div>
     </div>
   );

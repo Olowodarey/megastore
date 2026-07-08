@@ -1,6 +1,5 @@
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Phone } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 
 const ModernFooter = () => {
   const popularCategories = [
@@ -24,12 +23,14 @@ const ModernFooter = () => {
   ];
 
   return (
-    <footer className="bg-primary text-white mt-16">
+    <footer className="bg-primary text-primary-foreground mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Contact Section */}
           <div>
-            <h3 className="text-2xl font-bold mb-4">MegaMart</h3>
+            <h3 className="text-2xl font-bold mb-4 text-primary-foreground">
+              MegaMart
+            </h3>
             <div className="space-y-3">
               <p className="text-sm opacity-90">Contact Us</p>
               <div className="flex items-center gap-2">
@@ -45,11 +46,11 @@ const ModernFooter = () => {
             <div className="mt-6">
               <p className="text-sm mb-3">Download App</p>
               <div className="flex gap-2">
-                <div className="bg-white/10 hover:bg-white/20 transition-colors px-4 py-2 rounded-md cursor-pointer">
+                <div className="bg-primary-foreground/10 hover:bg-primary-foreground/20 transition-colors px-4 py-2 rounded-md cursor-pointer">
                   <p className="text-xs">Get it on</p>
                   <p className="text-sm font-semibold">Google Play</p>
                 </div>
-                <div className="bg-white/10 hover:bg-white/20 transition-colors px-4 py-2 rounded-md cursor-pointer">
+                <div className="bg-primary-foreground/10 hover:bg-primary-foreground/20 transition-colors px-4 py-2 rounded-md cursor-pointer">
                   <p className="text-xs">Download on the</p>
                   <p className="text-sm font-semibold">App Store</p>
                 </div>
@@ -59,7 +60,7 @@ const ModernFooter = () => {
 
           {/* Most Popular Categories */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">
+            <h4 className="text-lg font-semibold mb-4 text-primary-foreground">
               Most Popular Categories
             </h4>
             <ul className="space-y-2">
@@ -78,7 +79,9 @@ const ModernFooter = () => {
 
           {/* Customer Services */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Customer Services</h4>
+            <h4 className="text-lg font-semibold mb-4 text-primary-foreground">
+              Customer Services
+            </h4>
             <ul className="space-y-2">
               {customerServices.map((service) => (
                 <li key={service.name}>
@@ -95,7 +98,7 @@ const ModernFooter = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 pt-6 border-t border-white/20 text-center">
+        <div className="mt-12 pt-6 border-t border-primary-foreground/20 text-center">
           <p className="text-sm opacity-75">
             © 2024 All rights reserved. Reliance Retail Ltd.
           </p>

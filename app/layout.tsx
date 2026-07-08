@@ -4,6 +4,7 @@ import "@/app/_styles/globals.css";
 import ModernHeader from "./_components/ModernHeader";
 import ModernFooter from "./_components/ModernFooter";
 import ReduxProvider from "./_provider/ReduxProvider";
+import { ThemeProvider } from "./_provider/ThemeProvider";
 import ClientSideToastContainer from "./_components/toast";
 
 const josefin = Josefin_Sans({
@@ -25,15 +26,22 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en">
-      <ReduxProvider>
-        <body className={`${josefin.className} antialiased bg-background`}>
-          <ModernHeader />
-          <ClientSideToastContainer />
-          <main>{children}</main>
-          <ModernFooter />
-        </body>
-      </ReduxProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${josefin.className} antialiased bg-background`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ReduxProvider>
+            <ModernHeader />
+            <ClientSideToastContainer />
+            <main>{children}</main>
+            <ModernFooter />
+          </ReduxProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

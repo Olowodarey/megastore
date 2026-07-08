@@ -12,25 +12,22 @@ interface ModernProductCardProps {
 const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
   const { id, title, price, image, rating } = product;
 
-  // Calculate discount percentage (mock - you can calculate based on your data)
-  const discount = 32; // This would come from your product data
-  const originalPrice = (price * 1.5).toFixed(2); // Mock original price
+  const discount = 32;
+  const originalPrice = (price * 1.5).toFixed(2);
 
   return (
     <Link href={`/products/${id}`}>
       <Card className="group relative overflow-hidden hover:shadow-lg transition-shadow duration-300 border-border/50">
-        {/* Discount Badge */}
         {discount > 0 && (
           <Badge
             variant="accent"
-            className="absolute top-3 left-3 z-10 bg-accent text-accent-foreground font-semibold"
+            className="absolute top-3 left-3 z-10 font-semibold"
           >
             {discount}% OFF
           </Badge>
         )}
 
-        {/* Product Image */}
-        <div className="relative w-full h-48 bg-muted/30 overflow-hidden">
+        <div className="relative w-full h-48 bg-muted/40 overflow-hidden">
           <Image
             alt={title}
             src={image}
@@ -40,34 +37,24 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
           />
         </div>
 
-        {/* Product Info */}
         <div className="p-4">
-          {/* Title */}
-          <h3
-            className="text-sm font-medium line-clamp-2 mb-3 min-h-[40px]"
-            style={{ color: "#222222" }}
-          >
+          <h3 className="text-sm font-medium text-foreground line-clamp-2 mb-3 min-h-[40px]">
             {title}
           </h3>
 
-          {/* Price Section */}
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-lg font-bold text-green-600">${price}</span>
+            <span className="text-lg font-bold text-primary">${price}</span>
             {discount > 0 && (
-              <span
-                className="text-sm line-through"
-                style={{ color: "#666666" }}
-              >
+              <span className="text-sm line-through text-muted-foreground">
                 ${originalPrice}
               </span>
             )}
           </div>
 
-          {/* Rating */}
           {rating && (
             <div className="flex items-center gap-1 text-sm">
-              <span className="text-yellow-500">★</span>
-              <span style={{ color: "#666666" }}>
+              <span className="text-accent">★</span>
+              <span className="text-muted-foreground">
                 {rating.rate} ({rating.count})
               </span>
             </div>

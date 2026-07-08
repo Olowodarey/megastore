@@ -9,9 +9,7 @@ interface SectionTitleProps {
 const SectionTitle: React.FC<SectionTitleProps> = ({ title, viewAllLink }) => {
   return (
     <div className="flex items-center justify-between mb-6">
-      <h2 className="text-2xl font-bold" style={{ color: "#222222" }}>
-        {title}
-      </h2>
+      <h2 className="text-2xl font-bold text-foreground">{title}</h2>
       {viewAllLink && (
         <Link
           href={viewAllLink}

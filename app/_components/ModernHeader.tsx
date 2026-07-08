@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Search, ShoppingCart, User, MapPin, Phone } from "lucide-react";
+import { Search, User, MapPin, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CartIcon from "./cartIcon";
+import { ThemeToggle } from "./ThemeToggle";
 
 const ModernHeader = () => {
   return (
-    <header className="w-full border-b">
+    <header className="w-full border-b bg-background text-foreground">
       {/* Top Bar */}
       <div className="bg-muted/50 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -33,7 +34,7 @@ const ModernHeader = () => {
       </div>
 
       {/* Main Header */}
-      <div className="bg-white">
+      <div className="bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4">
             {/* Logo */}
@@ -44,17 +45,19 @@ const ModernHeader = () => {
             {/* Search Bar */}
             <div className="hidden md:flex flex-1 max-w-2xl mx-8">
               <div className="relative w-full">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="Search essentials, groceries and more..."
-                  className="w-full pl-10 pr-4 py-2.5 border border-input rounded-md bg-muted/30 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-colors"
+                  className="w-full pl-10 pr-4 py-2.5 border border-input rounded-md bg-muted/30 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:bg-background transition-colors"
                 />
               </div>
             </div>
 
             {/* Right Section */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <ThemeToggle />
+
               {/* Sign In */}
               <Button
                 variant="ghost"
@@ -79,7 +82,7 @@ const ModernHeader = () => {
       </div>
 
       {/* Navigation Menu */}
-      <div className="bg-white border-t">
+      <div className="bg-background border-t">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center gap-6 py-3 overflow-x-auto">
             <Button variant="default" size="sm" className="whitespace-nowrap">
@@ -132,13 +135,13 @@ const ModernHeader = () => {
       </div>
 
       {/* Mobile Search */}
-      <div className="md:hidden bg-white border-t px-4 py-3">
+      <div className="md:hidden bg-background border-t px-4 py-3">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <input
             type="text"
             placeholder="Search products..."
-            className="w-full pl-10 pr-4 py-2 border border-input rounded-md bg-muted/30 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full pl-10 pr-4 py-2 border border-input rounded-md bg-muted/30 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
       </div>
