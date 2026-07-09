@@ -10,7 +10,7 @@ const ModernHeader = () => {
   return (
     <header className="w-full border-b bg-background text-foreground">
       {/* Top Bar */}
-      <div className="bg-muted/50 border-b">
+      <div className="bg-[#F5EEDD] dark:bg-muted/50 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-2 text-sm">
             <p className="text-muted-foreground">
@@ -82,7 +82,7 @@ const ModernHeader = () => {
       </div>
 
       {/* Navigation Menu */}
-      <div className="bg-background border-t">
+      <div className="bg-[#DFF0DE] dark:bg-background border-t">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center gap-6 py-3 overflow-x-auto">
             <Button variant="default" size="sm" className="whitespace-nowrap">

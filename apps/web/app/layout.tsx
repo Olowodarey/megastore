@@ -30,7 +30,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body className={`${josefin.className} antialiased bg-background`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

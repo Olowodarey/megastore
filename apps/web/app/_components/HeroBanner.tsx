@@ -12,7 +12,7 @@ const banners = [
     subtitle: "Best Deal Online on smart watches",
     discount: "UP to 80% OFF",
     image: "/banner-1.jpg", // You'll need to add actual images
-    bgColor: "bg-gradient-to-r from-slate-800 to-slate-700",
+    bgColor: "bg-[#1A2942]",
   },
   {
     id: 2,
@@ -20,7 +20,7 @@ const banners = [
     subtitle: "Grab the latest smartphones",
     discount: "UP to 70% OFF",
     image: "/banner-2.jpg",
-    bgColor: "bg-gradient-to-r from-blue-800 to-blue-700",
+    bgColor: "bg-[#1A2942]",
   },
 ];
 
