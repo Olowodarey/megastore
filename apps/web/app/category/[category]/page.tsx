@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useParams } from "next/navigation";
-import ProductCard from "../../_components/productCard";
+import ModernProductCard from "../../_components/ModernProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFetchCategoryProductsQuery } from "../../_services/fetchquerry";
 
@@ -14,13 +14,16 @@ export default function CategoryPage() {
     isLoading,
   } = useFetchCategoryProductsQuery(category as string);
 
+  const total = products?.total ?? 0;
+
   if (isLoading) {
     return (
-      <div className="bg-background">
-        <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 lg:max-w-7xl lg:px-8">
-          <Skeleton className="h-10 w-64 mb-6" />
-          <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-4 lg:gap-x-8">
-            {[...Array(8)].map((_, i) => (
+      <div className="bg-background min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <Skeleton className="h-10 w-64 mb-2" />
+          <Skeleton className="h-5 w-32 mb-8" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {[...Array(10)].map((_, i) => (
               <Skeleton key={i} className="h-64 rounded-lg" />
             ))}
           </div>
@@ -31,7 +34,7 @@ export default function CategoryPage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background">
+      <div className="flex items-center justify-center min-h-screen bg-background">
         <p className="text-lg font-semibold text-destructive">
           Error loading {String(category)} products. Please try again later.
         </p>
@@ -40,17 +43,26 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="bg-background">
-      <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-5 lg:max-w-7xl lg:px-8">
+    <div className="bg-background min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <h1 className="text-3xl font-bold tracking-tight text-foreground capitalize">
-          {String(category)} Collection
+          {String(category)}
         </h1>
+        <p className="mt-1 text-sm text-muted-foreground mb-8">
+          {total} {total === 1 ? "product" : "products"} found
+        </p>
 
-        <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-4 lg:gap-x-8">
-          {products?.items?.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {total === 0 ? (
+          <div className="flex items-center justify-center h-64">
+            <p className="text-muted-foreground">No products in this category yet.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {products?.items?.map((product) => (
+              <ModernProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
