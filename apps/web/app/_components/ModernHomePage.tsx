@@ -30,8 +30,8 @@ const ModernHomePage = () => {
   // Fetch products for different sections
   const { data: smartphones, isLoading: loadingSmartphones } =
     useFetchCategoryProductsQuery("Electronics");
-  const { data: clothes, isLoading: loadingClothes } =
-    useFetchCategoryProductsQuery("Clothes");
+  const { data: shoes, isLoading: loadingShoes } =
+    useFetchCategoryProductsQuery("Shoes");
 
   return (
     <div className="min-h-screen bg-background">
@@ -125,14 +125,14 @@ const ModernHomePage = () => {
           </div>
         </section>
 
-        {/* Clothes Section (Daily Essentials style) */}
+        {/* Shoes Section */}
         <section>
           <SectionTitle
-            title="Daily Essentials"
-            viewAllLink="/category/Clothes"
+            title="Top Footwear Picks"
+            viewAllLink="/category/Shoes"
           />
 
-          {loadingClothes ? (
+          {loadingShoes ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               {[...Array(6)].map((_, i) => (
                 <Skeleton key={i} className="h-48 rounded-lg" />
@@ -140,7 +140,7 @@ const ModernHomePage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              {clothes?.items?.slice(0, 6).map((product) => (
+              {shoes?.items?.slice(0, 6).map((product) => (
                 <ModernProductCard key={product.id} product={product} />
               ))}
             </div>
