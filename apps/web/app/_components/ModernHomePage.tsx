@@ -29,9 +29,9 @@ const categories = [
 const ModernHomePage = () => {
   // Fetch products for different sections
   const { data: smartphones, isLoading: loadingSmartphones } =
-    useFetchCategoryProductsQuery("electronics");
-  const { data: jewelry, isLoading: loadingJewelry } =
-    useFetchCategoryProductsQuery("jewelery");
+    useFetchCategoryProductsQuery("Electronics");
+  const { data: clothes, isLoading: loadingClothes } =
+    useFetchCategoryProductsQuery("Clothes");
 
   return (
     <div className="min-h-screen bg-background">
@@ -55,7 +55,7 @@ const ModernHomePage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {smartphones?.slice(0, 5).map((product) => (
+              {smartphones?.items?.slice(0, 5).map((product) => (
                 <ModernProductCard key={product.id} product={product} />
               ))}
             </div>
@@ -125,14 +125,14 @@ const ModernHomePage = () => {
           </div>
         </section>
 
-        {/* Jewelry Section (Daily Essentials style) */}
+        {/* Clothes Section (Daily Essentials style) */}
         <section>
           <SectionTitle
             title="Daily Essentials"
-            viewAllLink="/category/jewelery"
+            viewAllLink="/category/Clothes"
           />
 
-          {loadingJewelry ? (
+          {loadingClothes ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               {[...Array(6)].map((_, i) => (
                 <Skeleton key={i} className="h-48 rounded-lg" />
@@ -140,7 +140,7 @@ const ModernHomePage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              {jewelry?.slice(0, 6).map((product) => (
+              {clothes?.items?.slice(0, 6).map((product) => (
                 <ModernProductCard key={product.id} product={product} />
               ))}
             </div>

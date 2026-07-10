@@ -10,10 +10,10 @@ interface ModernProductCardProps {
 }
 
 const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
-  const { id, title, price, image, rating } = product;
+  const { id, title, price, thumbnail, rating, discountPercentage } = product;
 
-  const discount = 32;
-  const originalPrice = (price * 1.5).toFixed(2);
+  const discount = Math.round(discountPercentage);
+  const originalPrice = (price / (1 - discountPercentage / 100)).toFixed(2);
 
   return (
     <Link href={`/products/${id}`}>
@@ -30,7 +30,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
         <div className="relative w-full h-48 bg-muted/40 overflow-hidden">
           <Image
             alt={title}
-            src={image}
+            src={thumbnail}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw"
             className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
@@ -51,12 +51,10 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
             )}
           </div>
 
-          {rating && (
+          {rating != null && (
             <div className="flex items-center gap-1 text-sm">
               <span className="text-accent">★</span>
-              <span className="text-muted-foreground">
-                {rating.rate} ({rating.count})
-              </span>
+              <span className="text-muted-foreground">{rating.toFixed(1)}</span>
             </div>
           )}
         </div>

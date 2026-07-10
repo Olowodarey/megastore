@@ -9,7 +9,7 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { id, title, price, image, rating } = product;
+  const { id, title, price, thumbnail, rating } = product;
 
   return (
     <Link href={`/products/${id}`}>
@@ -17,7 +17,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="relative w-full h-32 sm:h-40 bg-muted/40 rounded-md overflow-hidden">
           <Image
             alt={title}
-            src={image}
+            src={thumbnail}
             fill
             sizes="(max-width: 640px) 100vw, 180px"
             className="object-contain p-3 group-hover:scale-105 transition-transform"
@@ -31,7 +31,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             ${price}
           </p>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            <span className="text-accent">★</span> {rating?.rate ?? "N/A"}
+            <span className="text-accent">★</span> {rating?.toFixed(1) ?? "N/A"}
           </p>
         </div>
       </Card>

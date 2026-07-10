@@ -1,18 +1,24 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Product } from "../_lib/types";
+import { PaginatedProducts, Product } from "../_lib/types";
+
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
 
 export const postApi = createApi({
   reducerPath: "postApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://fakestoreapi.com/products" }),
+  baseQuery: fetchBaseQuery({ baseUrl: API_URL }),
   endpoints: (builder) => ({
     fetchCategories: builder.query<string[], void>({
-      query: () => "categories",
+      query: () => "/products/categories",
     }),
-    fetchCategoryProducts: builder.query<Product[], string>({
-      query: (category) => `category/${category}`,
+    fetchCategoryProducts: builder.query<PaginatedProducts, string>({
+      query: (category) => `/products/category/${category}`,
     }),
     fetchProductById: builder.query<Product, string | number>({
-      query: (id) => `${id}`,
+      query: (id) => `/products/${id}`,
+    }),
+    fetchAllProducts: builder.query<PaginatedProducts, void>({
+      query: () => "/products",
     }),
   }),
 });
@@ -21,4 +27,5 @@ export const {
   useFetchCategoriesQuery,
   useFetchCategoryProductsQuery,
   useFetchProductByIdQuery,
+  useFetchAllProductsQuery,
 } = postApi;

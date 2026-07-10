@@ -16,7 +16,7 @@ interface ProductDetailProps {
 }
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
-  const { title, price, description, image, rating } = product;
+  const { title, price, description, thumbnail, rating } = product;
   const [quantity, setQuantity] = useState(1);
   const dispatch = useAppDispatch();
 
@@ -46,7 +46,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
           {/* Image */}
           <div className="relative h-96 w-full overflow-hidden rounded-lg bg-muted/40 flex items-center justify-center">
             <Image
-              src={image}
+              src={thumbnail}
               alt={title}
               width={400}
               height={400}
@@ -63,7 +63,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
             <p className="mt-6 text-3xl font-semibold text-primary">${price}</p>
             <p className="mt-2 text-sm font-medium text-muted-foreground">
               <span className="text-accent">★</span> Rating:{" "}
-              {rating?.rate ?? "N/A"}
+              {rating?.toFixed(1) ?? "N/A"}
             </p>
 
             <Separator className="my-6" />

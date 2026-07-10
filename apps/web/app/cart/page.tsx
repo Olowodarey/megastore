@@ -58,7 +58,7 @@ const Cart = () => {
                   <Card className="flex gap-4 p-4">
                     <div className="relative w-20 h-20 shrink-0 rounded-md bg-muted/40 overflow-hidden">
                       <Image
-                        src={item.image}
+                        src={item.thumbnail}
                         alt={item.title}
                         fill
                         sizes="80px"
