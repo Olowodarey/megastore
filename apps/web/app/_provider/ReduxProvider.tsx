@@ -1,15 +1,29 @@
 "use client";
 
-import { Provider } from "react-redux";
+import { useEffect } from "react";
+import { Provider, useDispatch } from "react-redux";
 import { store } from "../../redux/store";
+import { initializeAuth } from "../_lib/authSlice";
+import { initializeCart } from "../_lib/cartSlice";
 import { ReactNode } from "react";
+import type { AppDispatch } from "../../redux/store";
 
-interface ReduxProviderProps {
-  children: ReactNode;
+function Initializer() {
+  const dispatch = useDispatch<AppDispatch>();
+  useEffect(() => {
+    dispatch(initializeAuth());
+    dispatch(initializeCart());
+  }, [dispatch]);
+  return null;
 }
 
-const ReduxProvider = ({ children }: ReduxProviderProps) => {
-  return <Provider store={store}>{children}</Provider>;
+const ReduxProvider = ({ children }: { children: ReactNode }) => {
+  return (
+    <Provider store={store}>
+      <Initializer />
+      {children}
+    </Provider>
+  );
 };
 
 export default ReduxProvider;
