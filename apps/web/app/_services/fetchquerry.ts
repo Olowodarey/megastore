@@ -20,6 +20,9 @@ export const postApi = createApi({
     fetchAllProducts: builder.query<PaginatedProducts, void>({
       query: () => "/products",
     }),
+    searchProducts: builder.query<PaginatedProducts, string>({
+      query: (q) => `/products?search=${encodeURIComponent(q)}&pageSize=20`,
+    }),
   }),
 });
 
@@ -28,4 +31,5 @@ export const {
   useFetchCategoryProductsQuery,
   useFetchProductByIdQuery,
   useFetchAllProductsQuery,
+  useSearchProductsQuery,
 } = postApi;

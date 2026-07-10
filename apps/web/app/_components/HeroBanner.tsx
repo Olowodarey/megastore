@@ -144,18 +144,36 @@ const HeroBanner = () => {
             </div>
           </div>
 
-          {/* Right — product image with glow */}
+          {/* Right — product image */}
           <div className="hidden md:flex items-center justify-center relative w-72 h-72 lg:w-80 lg:h-80 shrink-0">
-            {/* Glow blob behind image */}
-            <div className={`absolute inset-8 rounded-full ${theme.glow} blur-2xl`} />
-            <div className="relative w-full h-full">
+
+            {/* Outer glow bloom */}
+            <div className={`absolute inset-0 rounded-full ${theme.glow} blur-3xl scale-110`} />
+
+            {/* Decorative ring */}
+            <div className="absolute inset-4 rounded-full border border-white/10" />
+
+            {/* Second inner ring */}
+            <div className="absolute inset-10 rounded-full border border-white/5" />
+
+            {/* Floating dots */}
+            <div className="absolute top-4 right-8 w-2 h-2 rounded-full bg-white/30" />
+            <div className="absolute bottom-8 left-6 w-1.5 h-1.5 rounded-full bg-white/20" />
+            <div className="absolute top-1/3 left-2 w-1 h-1 rounded-full bg-white/25" />
+
+            {/* Frosted glass image frame */}
+            <div className="relative w-56 h-56 lg:w-64 lg:h-64 rounded-3xl bg-white/10 backdrop-blur-md border border-white/15 shadow-2xl overflow-hidden group-hover:scale-105 transition-transform duration-500">
+
+              {/* Inner glow inside frame */}
+              <div className={`absolute inset-0 ${theme.glow} opacity-60`} />
+
               <Image
                 key={product.id}
                 src={product.thumbnail}
                 alt={product.title}
                 fill
-                sizes="320px"
-                className="object-contain drop-shadow-2xl"
+                sizes="256px"
+                className="object-contain p-6 drop-shadow-xl"
                 priority
               />
             </div>

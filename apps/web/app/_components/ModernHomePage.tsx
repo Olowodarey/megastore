@@ -85,7 +85,7 @@ const ModernHomePage = () => {
           {loadingElectronics ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[...Array(3)].map((_, i) => (
-                <Skeleton key={i} className="h-48 rounded-xl" />
+                <Skeleton key={i} className="h-56 rounded-2xl" />
               ))}
             </div>
           ) : (
@@ -95,39 +95,55 @@ const ModernHomePage = () => {
                 .sort((a, b) => b.rating - a.rating)
                 .slice(0, 3)
                 .map((product, index) => {
-                  const bgColors = [
-                    "bg-slate-800",
-                    "bg-blue-600",
-                    "bg-violet-600",
+                  const themes = [
+                    { bg: "from-slate-900 to-slate-700", glow: "bg-blue-400/20", ring: "border-blue-400/20" },
+                    { bg: "from-blue-700 to-blue-500",   glow: "bg-cyan-300/20",  ring: "border-cyan-300/20" },
+                    { bg: "from-violet-700 to-purple-500", glow: "bg-pink-300/20", ring: "border-pink-300/20" },
                   ];
-                  const textColors = ["text-white", "text-white", "text-white"];
+                  const t = themes[index % themes.length];
                   return (
                     <Link key={product.id} href={`/products/${product.id}`}>
-                      <div
-                        className={`relative h-48 rounded-xl ${bgColors[index]} overflow-hidden group cursor-pointer hover:opacity-90 transition-opacity`}
-                      >
-                        <div className="absolute inset-0 flex items-center justify-between px-8">
-                          <div className={textColors[index]}>
-                            <p className="text-sm opacity-75 mb-1">
+                      <div className={`relative h-56 rounded-2xl bg-gradient-to-br ${t.bg} overflow-hidden group cursor-pointer transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl`}>
+
+                        {/* Decorative background circles */}
+                        <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/5" />
+                        <div className="absolute -bottom-6 -left-6 w-28 h-28 rounded-full bg-white/5" />
+
+                        {/* Right-side gradient fade so image blends in */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/20" />
+
+                        {/* Text — left side */}
+                        <div className="absolute left-5 top-5 bottom-5 flex flex-col justify-between z-10 w-[48%]">
+                          <div>
+                            <span className="inline-block bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full mb-2">
                               {Math.round(product.discountPercentage)}% OFF
-                            </p>
-                            <p className="text-base font-semibold w-36 line-clamp-2 leading-tight">
+                            </span>
+                            <p className="text-white font-bold text-sm leading-snug line-clamp-3">
                               {product.title}
                             </p>
-                            <p className="text-xs mt-2 opacity-75">
-                              ★ {product.rating.toFixed(1)}
-                            </p>
                           </div>
-                          <div className="relative w-28 h-36 shrink-0">
+                          <div>
+                            <p className="text-white/60 text-xs mb-0.5">★ {product.rating.toFixed(1)}</p>
+                            <p className="text-white font-semibold text-base">${product.price}</p>
+                          </div>
+                        </div>
+
+                        {/* Image — right side on a glowing circle platform */}
+                        <div className="absolute right-0 top-0 bottom-0 w-[52%] flex items-center justify-center">
+                          {/* Glow circle behind image */}
+                          <div className={`absolute w-40 h-40 rounded-full ${t.glow} blur-2xl`} />
+                          {/* Image container — slightly rotated for dynamism */}
+                          <div className={`relative w-36 h-36 rounded-2xl border ${t.ring} bg-white/10 backdrop-blur-sm overflow-hidden group-hover:scale-105 transition-transform duration-300 shadow-xl`}>
                             <Image
                               src={product.thumbnail}
                               alt={product.title}
                               fill
-                              sizes="112px"
-                              className="object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-300"
+                              sizes="144px"
+                              className="object-contain p-3"
                             />
                           </div>
                         </div>
+
                       </div>
                     </Link>
                   );

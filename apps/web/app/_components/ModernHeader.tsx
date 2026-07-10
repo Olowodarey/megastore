@@ -6,7 +6,6 @@ import { Search, User, MapPin, Phone, Package, LogOut, ChevronDown } from "lucid
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import CartIcon from "./cartIcon";
-import { ThemeToggle } from "./ThemeToggle";
 import { useAppDispatch, useAppSelector } from "../_lib/hooks";
 import { logout } from "../_lib/authSlice";
 
@@ -14,6 +13,13 @@ const ModernHeader = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { user } = useAppSelector((s) => s.auth);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (q) router.push(`/search?q=${encodeURIComponent(q)}`);
+  };
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -64,21 +70,27 @@ const ModernHeader = () => {
             </Link>
 
             {/* Search */}
-            <div className="hidden md:flex flex-1 max-w-2xl mx-8">
+            <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-2xl mx-8">
               <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <input
                   type="text"
-                  placeholder="Search essentials, groceries and more..."
-                  className="w-full pl-10 pr-4 py-2.5 border border-input rounded-md bg-muted/30 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:bg-background transition-colors"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search products..."
+                  className="w-full pl-10 pr-16 py-2.5 border border-input rounded-md bg-muted/30 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:bg-background transition-colors"
                 />
+                <button
+                  type="submit"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-primary-foreground text-xs font-medium px-3 py-1.5 rounded hover:bg-primary/90 transition-colors"
+                >
+                  Search
+                </button>
               </div>
-            </div>
+            </form>
 
             {/* Right */}
             <div className="flex items-center gap-2 sm:gap-4">
-              <ThemeToggle />
-
               {user ? (
                 /* Logged-in user dropdown */
                 <div className="relative" ref={dropdownRef}>
@@ -167,16 +179,18 @@ const ModernHeader = () => {
       </div>
 
       {/* Mobile Search */}
-      <div className="md:hidden bg-background border-t px-4 py-3">
+      <form onSubmit={handleSearch} className="md:hidden bg-background border-t px-4 py-3">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <input
             type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search products..."
             className="w-full pl-10 pr-4 py-2 border border-input rounded-md bg-muted/30 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
-      </div>
+      </form>
     </header>
   );
 };
