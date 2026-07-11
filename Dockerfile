@@ -3,19 +3,9 @@ RUN npm install -g pnpm@10
 
 WORKDIR /app
 
-# Copy workspace manifests first for layer caching
-COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
-COPY apps/api/package.json ./apps/api/
-COPY packages/shared/package.json ./packages/shared/
+COPY . .
 
-# Install all dependencies
 RUN pnpm install --frozen-lockfile
-
-# Copy source
-COPY apps/api ./apps/api
-COPY packages/shared ./packages/shared
-
-# Build
 RUN pnpm --filter api run build
 
 ENV NODE_ENV=production
