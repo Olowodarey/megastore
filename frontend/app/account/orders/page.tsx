@@ -22,14 +22,22 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function OrdersPage() {
   const router = useRouter();
-  const { user, token } = useAppSelector((s) => s.auth);
+  const { user, token, hasHydrated } = useAppSelector((s) => s.auth);
   const { data: orders, isLoading } = useGetOrdersQuery(undefined, { skip: !token });
 
   useEffect(() => {
-    if (!token) router.push("/login");
-  }, [token, router]);
+    if (hasHydrated && !token) router.push("/login");
+  }, [hasHydrated, token, router]);
 
-  if (!user) return null;
+  if (!hasHydrated || !user) {
+    return (
+      <div className="min-h-screen bg-background max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-4">
+        <Skeleton className="h-10 w-64" />
+        <Skeleton className="h-32 rounded-xl" />
+        <Skeleton className="h-32 rounded-xl" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">

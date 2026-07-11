@@ -1,11 +1,16 @@
-import { IsEmail, IsString, MinLength, IsOptional } from 'class-validator';
+import { IsEmail, IsString, IsOptional, IsStrongPassword } from 'class-validator';
 
 export class RegisterDto {
   @IsEmail()
   email: string;
 
-  @IsString()
-  @MinLength(6)
+  @IsStrongPassword(
+    { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 },
+    {
+      message:
+        'Password must be at least 8 characters and include an uppercase letter, a lowercase letter, a number, and a symbol',
+    },
+  )
   password: string;
 
   @IsOptional()
@@ -19,4 +24,9 @@ export class LoginDto {
 
   @IsString()
   password: string;
+}
+
+export class GoogleAuthDto {
+  @IsString()
+  idToken: string;
 }

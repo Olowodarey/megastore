@@ -3,12 +3,22 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Check, X } from "lucide-react";
 import { useAppDispatch } from "../_lib/hooks";
 import { setCredentials } from "../_lib/authSlice";
 import { useRegisterMutation } from "../_services/authApi";
+import GoogleSignInButton from "../_components/GoogleSignInButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+
+const PASSWORD_RULES = [
+  { label: "At least 8 characters", test: (p: string) => p.length >= 8 },
+  { label: "One uppercase letter", test: (p: string) => /[A-Z]/.test(p) },
+  { label: "One lowercase letter", test: (p: string) => /[a-z]/.test(p) },
+  { label: "One number", test: (p: string) => /\d/.test(p) },
+  { label: "One symbol (e.g. !@#$%)", test: (p: string) => /[^A-Za-z0-9]/.test(p) },
+];
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -16,10 +26,17 @@ export default function RegisterPage() {
   const [register, { isLoading }] = useRegisterMutation();
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
+  const [passwordTouched, setPasswordTouched] = useState(false);
+
+  const isPasswordValid = PASSWORD_RULES.every((rule) => rule.test(form.password));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    if (!isPasswordValid) {
+      setPasswordTouched(true);
+      return;
+    }
     try {
       const res = await register(form).unwrap();
       dispatch(setCredentials({ user: res.user, token: res.token }));
@@ -59,12 +76,28 @@ export default function RegisterPage() {
             <label className="text-sm font-medium text-foreground mb-1 block">Password</label>
             <Input
               type="password"
-              placeholder="Min. 6 characters"
+              placeholder="Create a strong password"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
+              onBlur={() => setPasswordTouched(true)}
               required
-              minLength={6}
             />
+            {(passwordTouched || form.password.length > 0) && (
+              <ul className="mt-2 space-y-1">
+                {PASSWORD_RULES.map((rule) => {
+                  const met = rule.test(form.password);
+                  return (
+                    <li
+                      key={rule.label}
+                      className={`text-xs flex items-center gap-1.5 ${met ? "text-green-600" : "text-muted-foreground"}`}
+                    >
+                      {met ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                      {rule.label}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
 
           {error && <p className="text-sm text-destructive">{error}</p>}
@@ -73,6 +106,17 @@ export default function RegisterPage() {
             {isLoading ? "Creating account…" : "Create Account"}
           </Button>
         </form>
+
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-border" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+          </div>
+        </div>
+
+        <GoogleSignInButton />
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
           Already have an account?{" "}

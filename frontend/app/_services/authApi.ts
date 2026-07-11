@@ -1,7 +1,37 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery, BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import type { RootState } from '../../redux/store';
+import { logout } from '../_lib/authSlice';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
+
+const rawBaseQuery = fetchBaseQuery({
+  baseUrl: API_URL,
+  prepareHeaders: (headers, { getState }) => {
+    const token = (getState() as RootState).auth.token;
+    if (token) headers.set('authorization', `Bearer ${token}`);
+    return headers;
+  },
+});
+
+// If a request that carried a token comes back 401, the token is genuinely
+// invalid/expired — log the user out cleanly instead of leaving pages to
+// fail silently. A 401 with no prior token (e.g. a wrong-password login
+// attempt) is left alone so it doesn't misfire as "session expired".
+const baseQueryWithAuthHandling: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
+  args,
+  api,
+  extraOptions,
+) => {
+  const hadToken = (api.getState() as RootState).auth.token;
+  const result = await rawBaseQuery(args, api, extraOptions);
+  if (result.error?.status === 401 && hadToken) {
+    api.dispatch(logout());
+    toast.info('Your session has expired. Please log in again.');
+  }
+  return result;
+};
 
 export interface AuthUser {
   id: string;
@@ -41,14 +71,7 @@ export interface Order {
 
 export const authApi = createApi({
   reducerPath: 'authApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: API_URL,
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token;
-      if (token) headers.set('authorization', `Bearer ${token}`);
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithAuthHandling,
   tagTypes: ['Orders'],
   endpoints: (builder) => ({
     register: builder.mutation<AuthResponse, { email: string; password: string; name?: string }>({
@@ -56,6 +79,9 @@ export const authApi = createApi({
     }),
     login: builder.mutation<AuthResponse, { email: string; password: string }>({
       query: (body) => ({ url: '/auth/login', method: 'POST', body }),
+    }),
+    googleAuth: builder.mutation<AuthResponse, { idToken: string }>({
+      query: (body) => ({ url: '/auth/google', method: 'POST', body }),
     }),
     getMe: builder.query<AuthUser, void>({
       query: () => '/auth/me',
@@ -89,6 +115,7 @@ export const authApi = createApi({
 export const {
   useRegisterMutation,
   useLoginMutation,
+  useGoogleAuthMutation,
   useGetMeQuery,
   useGetOrdersQuery,
   useGetOrderQuery,

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAppDispatch } from "../_lib/hooks";
 import { setCredentials } from "../_lib/authSlice";
 import { useLoginMutation } from "../_services/authApi";
+import GoogleSignInButton from "../_components/GoogleSignInButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -24,8 +25,9 @@ export default function LoginPage() {
       const res = await login(form).unwrap();
       dispatch(setCredentials({ user: res.user, token: res.token }));
       router.push("/");
-    } catch {
-      setError("Invalid email or password.");
+    } catch (err: unknown) {
+      const data = (err as { data?: { message?: string } })?.data;
+      setError(data?.message ?? "Invalid email or password.");
     }
   };
 
@@ -63,6 +65,17 @@ export default function LoginPage() {
             {isLoading ? "Signing in…" : "Sign In"}
           </Button>
         </form>
+
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-border" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+          </div>
+        </div>
+
+        <GoogleSignInButton />
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
           Don&apos;t have an account?{" "}

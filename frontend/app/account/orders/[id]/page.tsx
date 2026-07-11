@@ -38,14 +38,14 @@ const STATUS_COLORS: Record<string, string> = {
 export default function OrderDetailPage() {
   const { id } = useParams();
   const router = useRouter();
-  const { token, user } = useAppSelector((s) => s.auth);
+  const { token, user, hasHydrated } = useAppSelector((s) => s.auth);
   const { data: order, isLoading, error } = useGetOrderQuery(id as string, { skip: !token });
 
   useEffect(() => {
-    if (!token) router.push("/login");
-  }, [token, router]);
+    if (hasHydrated && !token) router.push("/login");
+  }, [hasHydrated, token, router]);
 
-  if (isLoading) {
+  if (!hasHydrated || isLoading) {
     return (
       <div className="min-h-screen bg-background max-w-3xl mx-auto px-4 py-10 space-y-4">
         <Skeleton className="h-8 w-48" />
