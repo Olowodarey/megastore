@@ -1,8 +1,14 @@
 [phases.install]
-cmds = ["cd /app && pnpm install --frozen-lockfile"]
+cmds = ["pnpm install --frozen-lockfile"]
 
 [phases.build]
-cmds = ["cd /app && pnpm --filter api run build"]
+cmds = [
+  "pnpm --filter api run prisma:generate",
+  "pnpm --filter api run build"
+]
+
+[phases.setup]
+nixPkgs = ["nodejs-20_x", "pnpm"]
 
 [start]
-cmd = "cd /app/apps/api && pnpm start:prod"
+cmd = "cd apps/api && npx prisma migrate deploy && node dist/main"
