@@ -50,6 +50,11 @@ export class OrdersController {
     return this.orders.findOne(req.user.id, id);
   }
 
+  @Post(':id/payment-init')
+  initializePayment(@Request() req: AuthRequest, @Param('id') id: string) {
+    return this.orders.initializePayment(req.user.id, id);
+  }
+
   @Post(':id/verify-payment')
   verifyPayment(@Request() req: AuthRequest, @Param('id') id: string, @Body() dto: VerifyPaymentDto) {
     return this.orders.verifyPayment(req.user.id, id, dto.reference);

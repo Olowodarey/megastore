@@ -66,10 +66,14 @@ export const authApi = createApi({
     }),
     getOrder: builder.query<Order, string>({
       query: (id) => `/orders/${id}`,
+      providesTags: ['Orders'],
     }),
     createOrder: builder.mutation<Order, { items: { productId: number; quantity: number }[] }>({
       query: (body) => ({ url: '/orders', method: 'POST', body }),
       invalidatesTags: ['Orders'],
+    }),
+    initializePayment: builder.mutation<{ amountKobo: number; rate: number; currency: string }, string>({
+      query: (orderId) => ({ url: `/orders/${orderId}/payment-init`, method: 'POST' }),
     }),
     verifyPayment: builder.mutation<Order, { orderId: string; reference: string }>({
       query: ({ orderId, reference }) => ({
@@ -89,5 +93,6 @@ export const {
   useGetOrdersQuery,
   useGetOrderQuery,
   useCreateOrderMutation,
+  useInitializePaymentMutation,
   useVerifyPaymentMutation,
 } = authApi;

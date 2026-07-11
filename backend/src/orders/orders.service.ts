@@ -17,9 +17,31 @@ interface PaystackVerifyResponse {
   };
 }
 
+const FALLBACK_USD_TO_NGN_RATE = Number(process.env.USD_TO_NGN_FALLBACK_RATE ?? '1600');
+const RATE_CACHE_MS = 60 * 60 * 1000; // 1 hour
+
 @Injectable()
 export class OrdersService {
+  private cachedRate: { value: number; fetchedAt: number } | null = null;
+
   constructor(private prisma: PrismaService) {}
+
+  /** Live USD→NGN rate (cached for an hour), falling back to a fixed rate if the lookup fails. */
+  private async getUsdToNgnRate(): Promise<number> {
+    if (this.cachedRate && Date.now() - this.cachedRate.fetchedAt < RATE_CACHE_MS) {
+      return this.cachedRate.value;
+    }
+    try {
+      const res = await fetch('https://open.er-api.com/v6/latest/USD');
+      const body = (await res.json()) as { rates?: Record<string, number> };
+      const rate = body.rates?.NGN;
+      if (!rate) throw new Error('NGN rate missing from response');
+      this.cachedRate = { value: rate, fetchedAt: Date.now() };
+      return rate;
+    } catch {
+      return this.cachedRate?.value ?? FALLBACK_USD_TO_NGN_RATE;
+    }
+  }
 
   async create(userId: string, items: CreateOrderItem[]) {
     // Fetch products to get current prices
@@ -75,6 +97,22 @@ export class OrdersService {
     return order;
   }
 
+  async initializePayment(userId: string, orderId: string) {
+    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+    if (!order) throw new NotFoundException('Order not found');
+    if (order.userId !== userId) throw new ForbiddenException();
+
+    const rate = await this.getUsdToNgnRate();
+    const amountKobo = Math.round(order.total * rate * 100);
+
+    await this.prisma.order.update({
+      where: { id: orderId },
+      data: { expectedPaymentKobo: amountKobo },
+    });
+
+    return { amountKobo, rate, currency: 'NGN' };
+  }
+
   async verifyPayment(userId: string, orderId: string, reference: string) {
     const order = await this.prisma.order.findUnique({ where: { id: orderId } });
     if (!order) throw new NotFoundException('Order not found');
@@ -95,7 +133,7 @@ export class OrdersService {
     const body = (await res.json()) as PaystackVerifyResponse;
 
     const paidKobo = body.data?.amount ?? 0;
-    const expectedKobo = Math.round(order.total * 100);
+    const expectedKobo = order.expectedPaymentKobo ?? Math.round(order.total * FALLBACK_USD_TO_NGN_RATE * 100);
     const verified = res.ok && body.status && body.data?.status === 'success' && paidKobo === expectedKobo;
 
     if (!verified) {

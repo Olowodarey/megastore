@@ -87,9 +87,10 @@ model Order {
   status           OrderStatus   @default(PENDING)
   total            Float
   items            OrderItem[]
-  paymentStatus    PaymentStatus @default(PENDING)
-  paymentReference String?       @unique
-  paidAt           DateTime?
+  paymentStatus       PaymentStatus @default(PENDING)
+  paymentReference    String?       @unique
+  expectedPaymentKobo Int?
+  paidAt              DateTime?
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
