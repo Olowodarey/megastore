@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:20-slim
 RUN npm install -g pnpm@10
 
 WORKDIR /app
@@ -6,6 +6,7 @@ WORKDIR /app
 COPY . .
 
 RUN pnpm install --frozen-lockfile
+RUN pnpm --filter api exec prisma generate
 RUN pnpm --filter api run build
 
 ENV NODE_ENV=production
