@@ -4,13 +4,19 @@ import Link from "next/link";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { usePaystackPayment } from "react-paystack";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useAppSelector } from "../../../_lib/hooks";
-import { useGetOrderQuery } from "../../../_services/authApi";
+import { useGetOrderQuery, useVerifyPaymentMutation } from "../../../_services/authApi";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { ChevronLeft, CheckCircle2, Clock, Truck, Package, XCircle } from "lucide-react";
+import { ChevronLeft, CheckCircle2, Clock, Truck, Package, XCircle, CreditCard, Loader2 } from "lucide-react";
+
+const PAYSTACK_PUBLIC_KEY = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY ?? "";
+const PAYSTACK_CURRENCY = process.env.NEXT_PUBLIC_PAYSTACK_CURRENCY ?? "NGN";
 
 const STEPS = ["PENDING", "PROCESSING", "SHIPPED", "DELIVERED"] as const;
 
@@ -33,12 +39,43 @@ const STATUS_COLORS: Record<string, string> = {
 export default function OrderDetailPage() {
   const { id } = useParams();
   const router = useRouter();
-  const { token } = useAppSelector((s) => s.auth);
+  const { token, user } = useAppSelector((s) => s.auth);
   const { data: order, isLoading, error } = useGetOrderQuery(id as string, { skip: !token });
+  const [verifyPayment, { isLoading: isVerifying }] = useVerifyPaymentMutation();
 
   useEffect(() => {
     if (!token) router.push("/login");
   }, [token, router]);
+
+  const initializePayment = usePaystackPayment({
+    publicKey: PAYSTACK_PUBLIC_KEY,
+    email: user?.email ?? "",
+    amount: order ? Math.round(order.total * 100) : 0,
+    currency: PAYSTACK_CURRENCY,
+  });
+
+  const handlePayNow = () => {
+    if (!order || !user) return;
+    initializePayment({
+      config: {
+        email: user.email,
+        amount: Math.round(order.total * 100),
+        currency: PAYSTACK_CURRENCY,
+        reference: `${order.id}_${Date.now()}`,
+      },
+      onSuccess: async (response) => {
+        try {
+          await verifyPayment({ orderId: order.id, reference: response.reference }).unwrap();
+          toast.success("Payment successful!");
+        } catch {
+          toast.error("Payment could not be verified. Please contact support.");
+        }
+      },
+      onClose: () => {
+        toast.info("Payment was not completed.");
+      },
+    });
+  };
 
   if (isLoading) {
     return (
@@ -77,6 +114,41 @@ export default function OrderDetailPage() {
           </div>
           <span className={`text-base font-bold ${STATUS_COLORS[order.status]}`}>{order.status}</span>
         </div>
+
+        {/* Payment */}
+        <Card className="p-6 mb-6 flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h2 className="text-sm font-semibold text-foreground mb-1">Payment</h2>
+            {order.paymentStatus === "PAID" ? (
+              <p className="text-sm text-green-600 flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4" /> Paid
+                {order.paidAt && ` on ${new Date(order.paidAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}`}
+              </p>
+            ) : order.paymentStatus === "FAILED" ? (
+              <p className="text-sm text-destructive flex items-center gap-1.5">
+                <XCircle className="h-4 w-4" /> Payment failed — please try again
+              </p>
+            ) : (
+              <p className="text-sm text-yellow-600 flex items-center gap-1.5">
+                <Clock className="h-4 w-4" /> Awaiting payment
+              </p>
+            )}
+          </div>
+
+          {order.paymentStatus !== "PAID" && (
+            <Button type="button" className="gap-2" onClick={handlePayNow} disabled={isVerifying}>
+              {isVerifying ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" /> Verifying…
+                </>
+              ) : (
+                <>
+                  <CreditCard className="h-4 w-4" /> Pay ${order.total.toFixed(2)} with Paystack
+                </>
+              )}
+            </Button>
+          )}
+        </Card>
 
         {/* Tracking progress */}
         {!isCancelled && (

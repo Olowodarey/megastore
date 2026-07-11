@@ -44,7 +44,7 @@ const Cart = () => {
       }).unwrap();
 
       dispatch(clearCart());
-      toast.success("Order placed successfully!");
+      toast.success("Order placed! Complete payment to confirm.");
       router.push(`/account/orders/${order.id}`);
     } catch {
       toast.error("Failed to place order. Please try again.");

@@ -34,6 +34,9 @@ export interface Order {
   total: number;
   createdAt: string;
   items: OrderItem[];
+  paymentStatus: 'PENDING' | 'PAID' | 'FAILED';
+  paymentReference: string | null;
+  paidAt: string | null;
 }
 
 export const authApi = createApi({
@@ -68,6 +71,14 @@ export const authApi = createApi({
       query: (body) => ({ url: '/orders', method: 'POST', body }),
       invalidatesTags: ['Orders'],
     }),
+    verifyPayment: builder.mutation<Order, { orderId: string; reference: string }>({
+      query: ({ orderId, reference }) => ({
+        url: `/orders/${orderId}/verify-payment`,
+        method: 'POST',
+        body: { reference },
+      }),
+      invalidatesTags: ['Orders'],
+    }),
   }),
 });
 
@@ -78,4 +89,5 @@ export const {
   useGetOrdersQuery,
   useGetOrderQuery,
   useCreateOrderMutation,
+  useVerifyPaymentMutation,
 } = authApi;

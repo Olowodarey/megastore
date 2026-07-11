@@ -1,9 +1,20 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 export interface CreateOrderItem {
   productId: number;
   quantity: number;
+}
+
+interface PaystackVerifyResponse {
+  status: boolean;
+  message: string;
+  data?: {
+    status: string;
+    amount: number;
+    currency: string;
+    reference: string;
+  };
 }
 
 @Injectable()
@@ -62,5 +73,49 @@ export class OrdersService {
     if (!order) throw new NotFoundException('Order not found');
     if (order.userId !== userId) throw new ForbiddenException();
     return order;
+  }
+
+  async verifyPayment(userId: string, orderId: string, reference: string) {
+    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+    if (!order) throw new NotFoundException('Order not found');
+    if (order.userId !== userId) throw new ForbiddenException();
+
+    if (order.paymentStatus === 'PAID') {
+      return this.findOne(userId, orderId);
+    }
+
+    const secretKey = process.env.PAYSTACK_SECRET_KEY;
+    if (!secretKey) {
+      throw new BadRequestException('Payment verification is not configured');
+    }
+
+    const res = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
+      headers: { Authorization: `Bearer ${secretKey}` },
+    });
+    const body = (await res.json()) as PaystackVerifyResponse;
+
+    const paidKobo = body.data?.amount ?? 0;
+    const expectedKobo = Math.round(order.total * 100);
+    const verified = res.ok && body.status && body.data?.status === 'success' && paidKobo === expectedKobo;
+
+    if (!verified) {
+      await this.prisma.order.update({
+        where: { id: orderId },
+        data: { paymentStatus: 'FAILED', paymentReference: reference },
+      });
+      throw new BadRequestException(body.message || 'Payment verification failed');
+    }
+
+    await this.prisma.order.update({
+      where: { id: orderId },
+      data: {
+        paymentStatus: 'PAID',
+        paymentReference: reference,
+        paidAt: new Date(),
+        status: 'PROCESSING',
+      },
+    });
+
+    return this.findOne(userId, orderId);
   }
 }
