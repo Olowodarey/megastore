@@ -6,13 +6,13 @@ A full-stack e-commerce platform built as a portfolio project. Features a NestJS
 
 ## Tech Stack
 
-| Layer | Tech |
-|-------|------|
+| Layer    | Tech                                           |
+| -------- | ---------------------------------------------- |
 | Frontend | Next.js 15, React 18, TypeScript, Tailwind CSS |
-| State | Redux Toolkit, RTK Query |
-| Backend | NestJS, Prisma ORM |
-| Database | PostgreSQL |
-| Auth | JWT (bcryptjs + Passport) |
+| State    | Redux Toolkit, RTK Query                       |
+| Backend  | NestJS, Prisma ORM                             |
+| Database | PostgreSQL                                     |
+| Auth     | JWT (bcryptjs + Passport)                      |
 
 ---
 
@@ -34,60 +34,63 @@ A full-stack e-commerce platform built as a portfolio project. Features a NestJS
 
 ```
 megastore/
-├── apps/
-│   ├── api/                  # NestJS backend — port 4000
-│   │   ├── src/
-│   │   │   ├── auth/         # JWT register / login / me
-│   │   │   ├── orders/       # Create & retrieve orders
-│   │   │   ├── products/     # List, search, category, detail
-│   │   │   └── prisma/       # Database service
-│   │   └── prisma/
-│   │       ├── schema.prisma
-│   │       └── seed.ts       # Seeds from Platzi + DummyJSON
-│   └── web/                  # Next.js 15 frontend — port 3000
-│       ├── app/
-│       │   ├── _components/  # Header, Footer, Cards, Banner
-│       │   ├── _lib/         # Redux slices (cart, auth)
-│       │   ├── _services/    # RTK Query API endpoints
-│       │   ├── account/      # Order history & detail
-│       │   ├── category/     # Category listing
-│       │   ├── products/     # Product detail
-│       │   ├── cart/         # Cart & checkout
-│       │   ├── login/
-│       │   ├── register/
-│       │   └── search/
-│       └── redux/            # Store configuration
-└── packages/
-    └── shared/               # Shared TypeScript types
+├── frontend/             # Next.js 15 frontend — port 3000
+│   ├── app/
+│   │   ├── _components/  # Header, Footer, Cards, Banner
+│   │   ├── _lib/         # Redux slices (cart, auth)
+│   │   ├── _services/    # RTK Query API endpoints
+│   │   ├── account/      # Order history & detail
+│   │   ├── category/     # Category listing
+│   │   ├── products/     # Product detail
+│   │   ├── cart/         # Cart & checkout
+│   │   ├── login/
+│   │   ├── register/
+│   │   └── search/
+│   └── redux/            # Store configuration
+│
+└── backend/              # NestJS backend — port 4000
+    ├── src/
+    │   ├── auth/         # JWT register / login / me
+    │   ├── orders/       # Create & retrieve orders
+    │   ├── products/     # List, search, category, detail
+    │   └── prisma/       # Database service
+    └── prisma/
+        ├── schema.prisma
+        └── seed.ts       # Seeds from Platzi + DummyJSON
 ```
 
 ---
 
 ## Getting Started
 
-**Prerequisites:** Node.js 20+, pnpm, PostgreSQL
+**Prerequisites:** Node.js 20+, npm, PostgreSQL
+
+### Backend Setup
 
 ```bash
-# Install dependencies
-pnpm install
-
-# Set up environment
-cp apps/api/.env.example apps/api/.env
-# Fill in DATABASE_URL and JWT_SECRET
-
-# Run migrations and seed
-cd apps/api
+cd backend
+npm install
+cp .env.example .env
+# Edit .env with your DATABASE_URL and JWT_SECRET
+npx prisma generate
 npx prisma migrate dev
 npm run db:seed
-
-# Start API (Terminal 1)
 npm run start:dev
-
-# Start frontend (Terminal 2)
-cd ../web && npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+Backend runs at: **http://localhost:4000/api/v1**
+
+### Frontend Setup
+
+```bash
+cd frontend
+npm install
+cp .env.local.example .env.local
+# Edit with NEXT_PUBLIC_API_URL=http://localhost:4000
+npm run dev
+```
+
+Frontend runs at: **http://localhost:3000**
 
 ---
 
@@ -107,6 +110,23 @@ GET   /api/v1/orders                           (protected)
 POST  /api/v1/orders                           (protected)
 GET   /api/v1/orders/:id                       (protected)
 ```
+
+---
+
+## Deployment
+
+### Backend (Railway)
+
+1. Deploy from `backend/` directory
+2. Add PostgreSQL database addon
+3. Set environment variables: `DATABASE_URL`, `JWT_SECRET`, `PORT`, `WEB_ORIGIN`
+4. Railway will use `nixpacks.toml` for build configuration
+
+### Frontend (Vercel)
+
+1. Deploy from `frontend/` directory
+2. Set `NEXT_PUBLIC_API_URL` to your Railway backend URL
+3. Deploy
 
 ---
 
