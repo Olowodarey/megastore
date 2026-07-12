@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Search, User, MapPin, Phone, Package, LogOut, ChevronDown } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -9,11 +9,15 @@ import CartIcon from "./cartIcon";
 import { useAppDispatch, useAppSelector } from "../_lib/hooks";
 import { logout } from "../_lib/authSlice";
 
+const AUTH_PAGES = ["/login", "/register"];
+
 const ModernHeader = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const pathname = usePathname();
   const { user } = useAppSelector((s) => s.auth);
   const [searchQuery, setSearchQuery] = useState("");
+  const isAuthPage = AUTH_PAGES.includes(pathname);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +42,26 @@ const ModernHeader = () => {
     setDropdownOpen(false);
     router.push("/");
   };
+
+  if (isAuthPage) {
+    return (
+      <header className="w-full border-b bg-background text-foreground">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between py-5">
+            <Link href="/" className="text-2xl font-bold text-primary">
+              MegaMart
+            </Link>
+            <Link
+              href="/"
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+            >
+              ← Back to shopping
+            </Link>
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="w-full border-b bg-background text-foreground">

@@ -1,5 +1,10 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Phone, Mail, MapPin, ArrowRight } from "lucide-react";
+
+const AUTH_PAGES = ["/login", "/register"];
 
 const categories = [
   { name: "Smartphones", href: "/category/Smartphones" },
@@ -26,6 +31,23 @@ const socials = [
 ];
 
 const ModernFooter = () => {
+  const pathname = usePathname();
+
+  if (AUTH_PAGES.includes(pathname)) {
+    return (
+      <footer className="bg-[#0f172a] text-slate-300 mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+          <p>© {new Date().getFullYear()} MegaMart. All rights reserved.</p>
+          <div className="flex items-center gap-5">
+            <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+            <Link href="/faq" className="hover:text-white transition-colors">FAQ</Link>
+          </div>
+        </div>
+      </footer>
+    );
+  }
+
   return (
     <footer className="bg-[#0f172a] text-slate-300 mt-16">
       {/* Newsletter strip */}
