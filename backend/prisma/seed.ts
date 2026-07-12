@@ -10,6 +10,7 @@ const ALLOWED_CATEGORIES: Record<string, string> = {
   clothes: 'Clothes',
   clothing: 'Clothes',
   electronics: 'Electronics',
+  furnitur: 'Furniture', // Platzi's own category name is misspelled ("Furnitur")
   furniture: 'Furniture',
   shoes: 'Shoes',
   miscellaneous: 'Miscellaneous',
