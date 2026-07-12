@@ -14,8 +14,24 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const apiOrigin = (() => {
+    try {
+      return new URL(process.env.NEXT_PUBLIC_API_URL ?? '').origin;
+    } catch {
+      return null;
+    }
+  })();
+
   return (
     <html lang="en">
+      <head>
+        {apiOrigin && (
+          <>
+            <link rel="preconnect" href={apiOrigin} />
+            <link rel="dns-prefetch" href={apiOrigin} />
+          </>
+        )}
+      </head>
       <body className="antialiased bg-background font-sans">
         <ReduxProvider>
           <ModernHeader />
