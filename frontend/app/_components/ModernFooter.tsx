@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Phone, Mail, MapPin, ArrowRight } from "lucide-react";
 
@@ -80,9 +81,7 @@ const ModernFooter = () => {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link href="/" className="inline-block mb-4">
-              <span className="text-3xl font-extrabold text-white tracking-tight">
-                Mega<span className="text-primary">Mart</span>
-              </span>
+              <Image src="/logo-full.png" alt="MegaMart" width={220} height={169} className="w-44 h-auto" />
             </Link>
             <p className="text-slate-400 text-sm leading-relaxed mb-6">
               Your one-stop destination for the best deals on electronics, fashion, furniture and more — delivered worldwide.
